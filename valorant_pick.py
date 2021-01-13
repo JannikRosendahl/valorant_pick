@@ -1,54 +1,57 @@
-import mouse
-import time
-import keyboard
 import sys
+import mouse
+import keyboard
+import time
 
+lock_in_coords = {'x': 959, 'y': 814}
+# champion_icon_start_coords = {'x': 668, 'y': 885}
+champion_icon_start_coords = {'x': 662, 'y': 898}
+champion_icon_size = {'x': 80, 'y': 80}
+champion_icon_border = {'x': 4, 'y': 4}
 
-class Point:
-    x = 0
-    y = 0
+champion_list = ['Brimstone', 'Jett', 'Omen', 'Phoenix', 'Reyna', 'Sage', 'Sova', 'Breach', 'Cypher', 'Killjoy', 'Raze',
+                 'Skye', 'Viper', 'Yoru']
+# top left corner of the top left champion
+champion_coords = {}
 
+# calculate champion icon positions
+for champion in champion_list:
+    # 'spacer', we dont want to click the top left corner
+    x_offset = champion_icon_size['x'] / 2
+    y_offset = champion_icon_size['y'] / 2
 
-def new_point(x, y):
-    p = Point()
-    p.x = x
-    p.y = y
-    return p
+    x_offset += ((champion_icon_size['x'] + champion_icon_border['x']) * (
+            champion_list.index(champion) % ((len(champion_list) + 2 // 2) // 2)))
+    y_offset += champion_icon_size['y'] + champion_icon_border['y'] if champion_list.index(
+        champion) >= len(champion_list) / 2 else 0
 
+    champion_coords[champion] = {'x': champion_icon_start_coords['x'] + x_offset,
+                                 'y': champion_icon_start_coords['y'] + y_offset}
 
-def get_champion_point(champ_choice):
-    if champ_choice == 1:
-        return new_point(710, 930)
-    elif champ_choice == 2:
-        return new_point(795, 930)
-    elif champ_choice == 3:
-        return new_point(880, 930)
-    elif champ_choice == 4:
-        return new_point(965, 930)
-    elif champ_choice == 5:
-        return new_point(1050, 930)
-    elif champ_choice == 6:
-        return new_point(1135, 930)
-    elif champ_choice == 7:
-        return new_point(1220, 930)
-    elif champ_choice == 8:
-        return new_point(710, 1000)
-    elif champ_choice == 9:
-        return new_point(795, 1000)
-    elif champ_choice == 10:
-        return new_point(880, 1000)
-    elif champ_choice == 11:
-        return new_point(965, 1000)
-    elif champ_choice == 12:
-        return new_point(1050, 1000)
-    elif champ_choice == 13:
-        return new_point(1135, 1000)
+# check if command line argument is given
+manual_input_required = False
+if len(sys.argv) > 1:
+    if champion_list.count(sys.argv[1].capitalize()) > 0:
+        print('valid command line argument found: ' + sys.argv[1])
+        champion_selection = sys.argv[1].capitalize()
     else:
-        return new_point(0, 0)
+        manual_input_required = True
+else:
+    manual_input_required = True
+
+# if no valid command line argument was found, get input manually
+if manual_input_required:
+    print('enter champion choice as number:')
+    for champion in champion_list:
+        print((str(champion_list.index(champion) + 1) + ':').rjust(3, ' '), champion)
+    choice = int(input())
+    champion_selection = champion_list[choice - 1]
+
+print('selected champion: ' + champion_selection)
 
 
 # toggle mechanism
-active = False
+active = True
 
 
 def flip_active():
@@ -56,45 +59,17 @@ def flip_active():
     active = not active
 
 
+print('standby, press ''esc'' to start')
+keyboard.wait('esc')
 keyboard.add_hotkey('esc', flip_active)
 
-print('enter champion choice as number:')
-print('1: Brimstone')
-print('2: Jett')
-print('3: Omen')
-print('4: Phoenix')
-print('5: Reyna')
-print('6: Sage')
-print('7: Sova')
-print('8: Breach')
-print('9: Cypher')
-print('10: Killjoy')
-print('11: Raze')
-print('12: Skye')
-print('13: Viper')
-choice = int(input())
-print('standby, press ''esc'' to start')
-
-champion_point = get_champion_point(choice)
-lock_in = new_point(1000, 800)
-
-''' test
-for i in range(13):
-    champ = get_champion_point(i)
-    mouse.move(champ.x, champ.y)
-    time.sleep(.25)
-    mouse.move(lock_in.x, lock_in.y)
-    time.sleep(.25)
-'''
-
-champ = get_champion_point(choice)
-keyboard.wait('esc')
 print('picking, press ''esc'' again to cancel')
 while active:
-    mouse.move(champ.x, champ.y)
+    mouse.move(champion_coords[champion_selection]['x'], champion_coords[champion_selection]['y'])
     time.sleep(.05)
     mouse.click('left')
-    mouse.move(lock_in.x, lock_in.y)
+    mouse.move(lock_in_coords['x'], lock_in_coords['y'])
     time.sleep(.05)
     mouse.click('left')
 print('terminating...')
+
