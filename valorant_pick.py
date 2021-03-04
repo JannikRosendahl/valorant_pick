@@ -4,13 +4,12 @@ import keyboard
 import time
 
 lock_in_coords = {'x': 959, 'y': 814}
-# champion_icon_start_coords = {'x': 668, 'y': 885}
-champion_icon_start_coords = {'x': 662, 'y': 898}
+champion_icon_start_coords = {'x': 626, 'y': 885}
 champion_icon_size = {'x': 80, 'y': 80}
 champion_icon_border = {'x': 4, 'y': 4}
 
-champion_list = ['Brimstone', 'Jett', 'Omen', 'Phoenix', 'Reyna', 'Sage', 'Sova', 'Breach', 'Cypher', 'Killjoy', 'Raze',
-                 'Skye', 'Viper', 'Yoru']
+champion_list = ['Brimstone', 'Jett', 'Omen', 'Phoenix', 'Reyna', 'Sage', 'Sova', 'Yoru', 'Astra', 'Breach', 'Cypher', 'Killjoy', 'Raze',
+                 'Skye', 'Viper']
 # top left corner of the top left champion
 champion_coords = {}
 
@@ -66,10 +65,10 @@ keyboard.add_hotkey('esc', flip_active)
 print('picking, press ''esc'' again to cancel')
 while active:
     mouse.move(champion_coords[champion_selection]['x'], champion_coords[champion_selection]['y'])
-    time.sleep(.05)
+    time.sleep(.025)
     mouse.click('left')
     mouse.move(lock_in_coords['x'], lock_in_coords['y'])
-    time.sleep(.05)
+    time.sleep(.025)
     mouse.click('left')
 print('terminating...')
 
